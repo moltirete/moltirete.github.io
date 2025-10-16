@@ -19,6 +19,28 @@
     setTimeout(function(){ try { input && input.focus(); } catch (_) {} }, 0);
   }
 
+  function lockSite() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+    showGate();
+  }
+
+  // Lock shortcut via URL hash (#lock)
+  if (typeof location !== "undefined" && location.hash === "#lock") {
+    lockSite();
+    // Clean the hash to avoid repeated locking on refresh
+    try {
+      history.replaceState(null, "", location.pathname + location.search);
+    } catch (_) {}
+  }
+
+  // Lock shortcut via keyboard (Shift + L)
+  window.addEventListener("keydown", function (e) {
+    if (e.shiftKey && (e.key === "L" || e.key === "l")) {
+      e.preventDefault();
+      lockSite();
+    }
+  });
+
   try {
     if (localStorage.getItem(STORAGE_KEY) === "true") {
       revealSite();
