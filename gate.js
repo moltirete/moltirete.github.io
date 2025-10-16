@@ -24,6 +24,9 @@
     showGate();
   }
 
+  // Expose manual lock helper for console use
+  try { window.devLock = lockSite; } catch (_) {}
+
   // Lock shortcut via URL hash (#lock)
   if (typeof location !== "undefined" && location.hash === "#lock") {
     lockSite();
@@ -38,6 +41,14 @@
     if (e.shiftKey && (e.key === "L" || e.key === "l")) {
       e.preventDefault();
       lockSite();
+    }
+  });
+
+  // Respond to hash changes after initial load
+  window.addEventListener("hashchange", function () {
+    if (location.hash === "#lock") {
+      lockSite();
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (_) {}
     }
   });
 
